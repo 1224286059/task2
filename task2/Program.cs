@@ -1,0 +1,104 @@
+﻿using System;
+
+namespace task2
+{
+    //定义信用卡类
+    class CreditCard
+    {
+        private int _Arrears, _RepayAmount;
+
+        public CreditCard(int Arrears, int RepayAmount)
+        {
+            this._Arrears = Arrears;
+            this._RepayAmount = RepayAmount;
+        }
+
+        public void repay()
+        {
+            this._Arrears = this._Arrears + this._RepayAmount;
+            Console.WriteLine("信用卡已经还款！剩余还款金额：{0}", this._Arrears);
+        }
+    }
+    class User
+    {
+
+    }
+    //定义银行卡类
+    class BankCard
+    {
+        private int _Balance, _RepayAmount;
+
+        public BankCard(int Balance, int RepayAmount)
+        {
+            this._Balance = Balance;
+            this._RepayAmount = RepayAmount;
+        }
+
+        public void repay()
+        {
+            if (this._Balance < this._RepayAmount)
+            {
+                Console.WriteLine("余额不足！无法还款");
+            }
+            else
+            {
+                this._Balance = this._Balance - this._RepayAmount;
+                Console.WriteLine("银行卡已经自动扣款！余额：{0}", this._Balance);
+            }
+
+
+        }
+
+    }
+    //定义银行类
+    class Bank
+    {
+        int _RepayDate;
+
+        public Bank(int repayDate)
+        {
+            this._RepayDate = repayDate;
+        }
+
+        public delegate void MeDelegate();
+
+        public event MeDelegate NotifyUsers;
+
+        public void Notify()
+        {
+
+
+            if (DateTime.Today.Day == this._RepayDate)
+            {
+                if (NotifyUsers != null)
+                {
+                    NotifyUsers();
+                }
+            }
+            else
+            {
+                Console.WriteLine("未到还款日，无须还款！");
+            }
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+            //定义银行对象
+            Bank bank1 = new Bank(2);
+            //定义信用卡对象
+            CreditCard creditCard1 = new CreditCard(-10000, 500);
+            //定义银行卡对象
+            BankCard bankCard1 = new BankCard(30000, 500);
+            //让两张银行卡都订阅事件
+            bank1.NotifyUsers += new Bank.MeDelegate(bankCard1.repay);
+            bank1.NotifyUsers += new Bank.MeDelegate(creditCard1.repay);
+            //开启自动扣款
+            bank1.Notify();
+        }
+    }
+}
+
